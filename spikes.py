@@ -24,7 +24,7 @@ def generate_stage():
     return 0
 
 def display_level(level):
-    font = pygame.font.SysFont(None, 30)
+    font = pygame.font.SysFont(None, 40)
     text = font.render("Level: " + str(level), True, WHITE)
     display.blit(text, (10, 10))
 
@@ -32,13 +32,28 @@ def display_game_over():
     font = pygame.font.SysFont(None, 100)
     text_surf = font.render("Game over", True, WHITE)
     text_rect = text_surf.get_rect()
-    text_rect.topleft = (250, 200)
+    text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2))
     display.blit(text_surf, text_rect)
-        
-    pygame.display.update()
-    time.sleep(5)
-    #menu.display_menu()
-    #game_loop()
+    
+    font = pygame.font.SysFont(None, 30)
+    text_surf = font.render("Press space or enter to restart", True, WHITE)
+    text_rect = text_surf.get_rect()
+    text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2) + 100)
+    display.blit(text_surf, text_rect)
+    
+    restart = False
+    while not restart:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                restart = True
+                global exit
+                exit = True
+                print("QUIT")
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    restart = True
+        pygame.display.update()
+    #time.sleep(5)
 
 def game_loop():
     player = Player()
