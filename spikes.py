@@ -1,4 +1,4 @@
-import pygame, time
+import pygame, time, random
 from player import Player
 from hazard import Hazard
 
@@ -12,6 +12,7 @@ DISPLAY_WIDTH = 800
 DISPLAY_HEIGHT = 600
 floor = DISPLAY_HEIGHT * 0.6
 ceiling = DISPLAY_HEIGHT * 0.3
+SPIKE_WIDTH = 80
 
 display = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
 pygame.display.set_caption('Spikes')
@@ -20,22 +21,33 @@ clock = pygame.time.Clock()
 exit = False
 spikes = []
 
-def generate_stage():
+def generate_stage(level):
+    # Display instructions
+    if level == 1:
+        font = pygame.font.SysFont(None, 35)
+        text_surf = font.render("Press space to jump. Use arrow keys to move.",
+                                True, WHITE)
+        text_rect = text_surf.get_rect()
+        text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2) - 175)
+        display.blit(text_surf, text_rect)
+        
     global spikes
     spikes = []
-    spikes.append(Hazard(300, 0))
-    spikes.append(Hazard(210, 1))
+    for i in range(1, level + 1):
+        orientation = random.randint(0, 1)
+        x = random.randint(50, DISPLAY_WIDTH - 50 - SPIKE_WIDTH)
+        spikes.append(Hazard(x, orientation))
 
 def display_level(level):
     font = pygame.font.SysFont(None, 40)
-    text = font.render("Level: " + str(level), True, WHITE)
-    display.blit(text, (10, 10))
+    text_surf = font.render("Level: " + str(level), True, WHITE)
+    display.blit(text_surf, (10, 10))
 
 def display_game_over():
-    font = pygame.font.SysFont(None, 100)
+    font = pygame.font.SysFont(None, 150)
     text_surf = font.render("Game over", True, WHITE)
     text_rect = text_surf.get_rect()
-    text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2) - 175)
+    text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2))
     display.blit(text_surf, text_rect)
     
     font = pygame.font.SysFont(None, 30)
@@ -61,12 +73,12 @@ def game_loop():
     left_change = 0
     right_change = 0
     ####################TESTING####################
-    up_change = 0
-    down_change = 0
+    #up_change = 0
+    #down_change = 0
     ####################TESTING####################
     
     level = 1
-    generate_stage()
+    generate_stage(level)
     
     crashed = False
     while not crashed:
@@ -114,15 +126,17 @@ def game_loop():
         for spike in spikes:
             spike.draw(display)
             if (spike.overlap(player)):
-                player.draw(display)
-                for spike in spikes:
-                    spike.draw(display)
+                #player.draw(display)
+                #for spike in spikes:
+                #    spike.draw(display)
+                display.fill(BLACK)
+                display_level(level)
                 display_game_over()
                 crashed = True
         
         if (player.is_level_complete()):
             level += 1
-            generate_stage()
+            generate_stage(level)
             player.reset()
         
         player.draw(display)
