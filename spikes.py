@@ -22,26 +22,37 @@ exit = False
 spikes = []
 
 def generate_stage(level):
-    # Display instructions
-    if level == 1:
-        font = pygame.font.SysFont(None, 35)
-        text_surf = font.render("Press space to jump. Use arrow keys to move.",
-                                True, WHITE)
-        text_rect = text_surf.get_rect()
-        text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2) - 175)
-        display.blit(text_surf, text_rect)
-        
     global spikes
     spikes = []
+    
     for i in range(1, level + 1):
         orientation = random.randint(0, 1)
-        x = random.randint(50, DISPLAY_WIDTH - 50 - SPIKE_WIDTH)
-        spikes.append(Hazard(x, orientation))
+        attempt = 1
+        while attempt <= 25:
+            spaced = True
+            attempt = attempt + 1
+            x = random.randint(70, DISPLAY_WIDTH - 50 - SPIKE_WIDTH)
+            for spike in spikes:
+                if x <= spike.get_left_x()+50 and x >= spike.get_left_x()-50:
+                    spaced = False
+            if spaced == True:
+                break
+        if attempt <= 25:
+            spikes.append(Hazard(x, orientation))
 
 def display_level(level):
     font = pygame.font.SysFont(None, 40)
     text_surf = font.render("Level: " + str(level), True, WHITE)
     display.blit(text_surf, (10, 10))
+    
+    # Display instructions
+    if level == 1:
+        font = pygame.font.SysFont(None, 30)
+        text_surf = font.render("Press space to jump. Use arrow keys to move.",
+                                True, WHITE)
+        text_rect = text_surf.get_rect()
+        text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2) + 200)
+        display.blit(text_surf, text_rect)    
 
 def display_game_over():
     font = pygame.font.SysFont(None, 150)
@@ -50,10 +61,10 @@ def display_game_over():
     text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2))
     display.blit(text_surf, text_rect)
     
-    font = pygame.font.SysFont(None, 30)
+    font = pygame.font.SysFont(None, 35)
     text_surf = font.render("Press enter to restart", True, WHITE)
     text_rect = text_surf.get_rect()
-    text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2) + 120)
+    text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2) + 100)
     display.blit(text_surf, text_rect)
     
     restart = False
@@ -61,8 +72,10 @@ def display_game_over():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 restart = True
-                global exit
-                exit = True
+                pygame.quit()
+                quit()                
+                #global exit
+                #exit = True
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     restart = True
@@ -87,8 +100,10 @@ def game_loop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 crashed = True
-                global exit
-                exit = True
+                pygame.quit()
+                quit()                
+                #global exit
+                #exit = True
                 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
