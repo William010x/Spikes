@@ -18,10 +18,13 @@ pygame.display.set_caption('Spikes')
 clock = pygame.time.Clock()
 
 exit = False
+spikes = []
 
 def generate_stage():
-    spikes = Hazard()
-    return 0
+    global spikes
+    spikes = []
+    spikes.append(Hazard(300, 0))
+    spikes.append(Hazard(210, 1))
 
 def display_level(level):
     font = pygame.font.SysFont(None, 40)
@@ -32,13 +35,13 @@ def display_game_over():
     font = pygame.font.SysFont(None, 100)
     text_surf = font.render("Game over", True, WHITE)
     text_rect = text_surf.get_rect()
-    text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2))
+    text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2) - 175)
     display.blit(text_surf, text_rect)
     
     font = pygame.font.SysFont(None, 30)
-    text_surf = font.render("Press space or enter to restart", True, WHITE)
+    text_surf = font.render("Press enter to restart", True, WHITE)
     text_rect = text_surf.get_rect()
-    text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2) + 100)
+    text_rect.center = ((DISPLAY_WIDTH / 2) , (DISPLAY_HEIGHT / 2) + 120)
     display.blit(text_surf, text_rect)
     
     restart = False
@@ -48,16 +51,13 @@ def display_game_over():
                 restart = True
                 global exit
                 exit = True
-                print("QUIT")
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN:
                     restart = True
         pygame.display.update()
-    #time.sleep(5)
 
 def game_loop():
     player = Player()
-    spikes = Hazard()
     left_change = 0
     right_change = 0
     ####################TESTING####################
@@ -111,14 +111,14 @@ def game_loop():
         player.move(left_change, right_change, jump)
         #player.fly(up_change, down_change)
         # Check for death
-        #for spike in spikes:
-        if (spikes.overlap(player)):
-            print("1: " + str(player.get_x()) + "," + str(player.get_y()))
-            print("2: " + str(player.get_x() + 25) + "," + str(player.get_y() + 25))
-            player.draw(display)
-            spikes.draw(display)            
-            display_game_over()
-            crashed = True
+        for spike in spikes:
+            spike.draw(display)
+            if (spike.overlap(player)):
+                player.draw(display)
+                for spike in spikes:
+                    spike.draw(display)
+                display_game_over()
+                crashed = True
         
         if (player.is_level_complete()):
             level += 1
@@ -126,7 +126,6 @@ def game_loop():
             player.reset()
         
         player.draw(display)
-        spikes.draw(display)
         pygame.display.update()
         clock.tick(60)
     

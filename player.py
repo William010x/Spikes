@@ -18,15 +18,15 @@ class Player:
         self.__double_jump = False
     
     ####################TESTING#################### 
-    def fly(self, up_change, down_change):
-        if (up_change == 1 and down_change == 0):
-            new_y = self.__y - MOVE_SPEED
-            if (not (new_y < 0)):
-                self.__y -= MOVE_SPEED
-        elif (up_change == 0 and down_change == 1):
-            new_y = self.__y + MOVE_SPEED
-            if (not (new_y > DISPLAY_WIDTH - 25)):
-                self.__y += MOVE_SPEED
+    #def fly(self, up_change, down_change):
+    #    if (up_change == 1 and down_change == 0):
+    #        new_y = self.__y - MOVE_SPEED
+    #        if (not (new_y < 0)):
+    #            self.__y -= MOVE_SPEED
+    #    elif (up_change == 0 and down_change == 1):
+    #        new_y = self.__y + MOVE_SPEED
+    #        if (not (new_y > DISPLAY_WIDTH - 25)):
+    #            self.__y += MOVE_SPEED
     ####################TESTING####################
     
     def move(self, left_change, right_change, jump):
@@ -83,9 +83,6 @@ class Player:
         
     def draw(self, display):
         display.blit(player_img, (self.__x, self.__y))
-        
-    def death(self):
-        return 0
         
     def is_level_complete(self):
         if (self.__x >= DISPLAY_WIDTH - 25):
